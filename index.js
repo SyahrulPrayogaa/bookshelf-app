@@ -1,8 +1,10 @@
-// todo: implementasi local storage
-// Todo: berikan toast saat berhasil menambah atau menghapus data
-// TODO: buat pencarian data
+/**
+ * * implementasi local storage
+ * Todo: berikan toast saat berhasil menambah atau menghapus data
+ * TODO: buat pencarian data
+ */
 
-const bookData = [];
+const storageKey = "BOOK_DATA";
 const RENDER_EVENT = "render-book";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -11,20 +13,45 @@ document.addEventListener("DOMContentLoaded", function () {
     addBook();
     event.preventDefault();
   });
+
+  if (checkForStorage) {
+    if (localStorage.getItem(storageKey) !== null) {
+      renderBook();
+    }
+  } else {
+    alert("Browser yang Anda gunakan tidak mendukung Web Storage");
+  }
 });
+
+function checkForStorage() {
+  return typeof Storage !== "undefined";
+}
+
+function putBookData(data) {
+  if (checkForStorage()) {
+    let bookData = [];
+    if (localStorage.getItem(storageKey) !== null) {
+      bookData = JSON.parse(localStorage.getItem(storageKey));
+    }
+
+    bookData.push(data);
+    localStorage.setItem(storageKey, JSON.stringify(bookData));
+  }
+}
+
+function getBookData() {
+  if (checkForStorage()) {
+    return JSON.parse(localStorage.getItem(storageKey)) || [];
+  } else {
+    return [];
+  }
+}
 
 function addBook() {
   const title = document.querySelector("#inputTitleBook").value;
   const author = document.querySelector("#inputAuthorBook").value;
   const year = document.querySelector("#inputYearBook").value;
   const isComplete = document.querySelector("#isComplete").checked;
-
-  // if (title != "" && author != "" && year != "") {
-  //   bookData.push(book);
-  //   document.dispatchEvent(new Event(RENDER_EVENT));
-  // } else {
-  //   alert("Gagal Memasukkan Buku kedalam Rak buku");
-  // }
 
   const generateID = generateId();
   const bookObject = generateBookObject(
@@ -34,7 +61,7 @@ function addBook() {
     year,
     isComplete
   );
-  bookData.push(bookObject);
+  putBookData(bookObject);
 
   document.dispatchEvent(new Event(RENDER_EVENT));
 }
@@ -90,7 +117,8 @@ function showBook(bookObject) {
   return container;
 }
 
-document.addEventListener(RENDER_EVENT, function () {
+function renderBook() {
+  bookData = getBookData();
   const uncompletedBook = document.getElementById("book-shelf-uncompleted");
   const completedBook = document.getElementById("book-shelf-completed");
 
@@ -105,15 +133,36 @@ document.addEventListener(RENDER_EVENT, function () {
       completedBook.append(dataElement);
     }
   }
+}
+
+document.addEventListener(RENDER_EVENT, function () {
+  renderBook();
 });
 
 function changeBookCompleted(bookId) {
+  bookData = getBookData();
   const bookTarget = findBook(bookId);
 
   if (bookTarget.isComplete == true) {
     bookTarget.isComplete = false;
+    localStorage.setItem(storageKey, JSON.stringify(bookData));
   } else if (bookTarget.isComplete == false) {
     bookTarget.isComplete = true;
+    localStorage.setItem(storageKey, JSON.stringify(bookData));
+  } else {
+    return;
+  }
+
+  document.dispatchEvent(new Event(RENDER_EVENT));
+}
+
+function deleteBook(bookId) {
+  bookData = getBookData();
+  const bookTarget = findBookIndex(bookId);
+  if (bookTarget == -1) return;
+  if (confirm("Apakah anda yakin?") == true) {
+    bookData.splice(bookTarget, 1);
+    localStorage.setItem(storageKey, JSON.stringify(bookData));
   } else {
     return;
   }
@@ -122,6 +171,7 @@ function changeBookCompleted(bookId) {
 }
 
 function findBook(bookId) {
+  bookData = getBookData();
   for (const data of bookData) {
     if (data.id === bookId) {
       return data;
@@ -130,19 +180,8 @@ function findBook(bookId) {
   return null;
 }
 
-function deleteBook(bookId) {
-  const bookTarget = findBookIndex(bookId);
-  if (bookTarget == -1) return;
-  if (confirm("Apakah anda yakin?") == true) {
-    bookData.splice(bookTarget, 1);
-  } else {
-    return;
-  }
-
-  document.dispatchEvent(new Event(RENDER_EVENT));
-}
-
 function findBookIndex(bookId) {
+  bookData = getBookData();
   for (const index in bookData) {
     if (bookData[index].id === bookId) {
       return index;
