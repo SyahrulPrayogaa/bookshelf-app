@@ -1,0 +1,113 @@
+<!-- Bookshelf Apps  -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookshelf Apps</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="title-apps">Bookshelf Apps</div>
+      <div class="title-dev">
+        <a href="https://github.com/syahrulprayogaa">
+          <i class="fa-brands fa-github"></i> Syahrulprayogaa
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="input-book">
+        <div class="card">
+          <div class="card-title">Masukkan Buku</div>
+          <div class="card-body">
+            <form>
+              <p>Judul</p>
+              <input
+                type="text"
+                id="inputTitleBook"
+                placeholder="Masukkan Judul Buku"
+                required
+              />
+
+              <p>Penulis</p>
+              <input
+                type="text"
+                id="inputAuthorBook"
+                placeholder="Masukkan Nama Penulis Buku"
+                required
+              />
+
+              <p>Tahun</p>
+              <input
+                type="number"
+                id="inputYearBook"
+                placeholder="Masukkan tahun Penerbitan Buku"
+                required
+              />
+
+              <br />
+              <label for="sudah dibaca">Sudah Dibaca</label>
+              <input type="checkbox" name="isComplete" id="isComplete" />
+              <br />
+
+              <button class="btn" id="submit-book" type="submit">
+                Masukkan Buku Kedalam Rak Buku
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="search">
+        <div class="card">
+          <div class="card-title">Pencarian</div>
+          <div class="card-body">
+            <div class="flex-container">
+              <div class="input-search">
+                <input type="text" id="input-search" placeholder="Cari Buku" />
+              </div>
+              <button class="btn" id="submit-search" onclick="">
+                <i class="fa-solid fa-magnifying-glass"></i> Cari
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="book-shelf">
+        <div class="flex-container">
+          <div class="book-shelf-uncompleted">
+            <div class="card">
+              <div class="card-title">Buku Yang Belum Dibaca</div>
+              <div class="card-body">
+                <div id="book-shelf-uncompleted"></div>
+              </div>
+            </div>
+          </div>
+          <div class="book-shelf-completed">
+            <div class="card">
+              <div class="card-title">Buku Yang Sudah Dibaca</div>
+              <div class="card-body">
+                <div id="book-shelf-completed"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>

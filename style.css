@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "roboto", serif;
+}
+
+a{
+  text-decoration: none;
+}
+
+a:hover{
+  text-decoration: underline;
+}
+
+.flex-container{
+  display: flex;
+}
+
+.navbar{
+  width: 100%;
+  padding: 20px 100px;
+  background-color: #001D3D;
+  color: white;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar .title-apps{
+  flex: auto;
+  font-size: 24px;
+  font-weight: bold;
+}
+.navbar .title-dev a{
+  color: white;
+}
+
+.container{
+  padding: 0 200px;
+}
+
+.card{
+  border: 1px solid #cacaca;
+  padding: 20px;
+  margin: 0 5px 20px;
+  border-radius: 6px;
+}
+
+.card-title{
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+p{
+  margin-bottom: 4px;
+}
+input{
+  margin-bottom: 16px;
+  padding: 8px;
+  width: 100%;
+  border-radius: 6px;
+}
+
+input[type=checkbox]{
+  width: auto;
+}
+
+.btn{
+  padding: 10px;
+  background-color: #001D3D;
+  color: white;
+  font-weight:400;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+}
+
+.btn:hover{
+  background-color: #033870;
+}
+
+.input-search{
+  flex: auto;
+}
+.input-search input{
+  margin: 0;
+}
+
+.book-shelf-completed{
+flex: auto;
+}
+
+.book-shelf-uncompleted{
+flex: auto;
+}
+
+.card-item{
+border: 1px solid #cacaca;
+padding: 10px;
+border-radius: 6px;
+margin-bottom: 10px;
+}
+
+.btn-group{
+  margin: 10px 0;
+}
+
+.btn-group .btn{
+  margin: 3px;
+}
