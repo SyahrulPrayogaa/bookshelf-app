@@ -1,9 +1,3 @@
-/**
- * // todo: implementasi local storage
- * Todo: berikan toast saat berhasil menambah atau menghapus data
- * TODO: buat pencarian data
- */
-
 const bookData = [];
 const RENDER_EVENT = "render-book";
 const SAVED_EVENT = "saved-book";
@@ -45,11 +39,12 @@ function addBook() {
   if ((title, author, year != "")) {
     bookData.push(bookObject);
   } else {
-    alert("Gagal Memasukkan Buku kedalam Rak buku");
+    return alert("Gagal Memasukkan Buku kedalam Rak buku");
   }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
+  toastMsg("Buku Berhasil Ditambahkan");
 }
 
 function generateId() {
@@ -133,6 +128,7 @@ function changeBookCompleted(bookId) {
 
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
+  toastMsg("Buku Berhasil Dipindahkan");
 }
 
 function findBook(bookId) {
@@ -155,6 +151,7 @@ function deleteBook(bookId) {
 
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
+  toastMsg("Buku Berhasil Dihapus");
 }
 
 function findBookIndex(bookId) {
@@ -215,4 +212,13 @@ function loadDataFromSearch() {
     }
   }
   document.dispatchEvent(new Event(RENDER_EVENT));
+}
+
+function toastMsg(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, "3500");
 }
