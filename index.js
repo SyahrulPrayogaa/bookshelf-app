@@ -21,6 +21,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+document.addEventListener(RENDER_EVENT, function () {
+  const uncompletedBook = document.getElementById("book-shelf-uncompleted");
+  const completedBook = document.getElementById("book-shelf-completed");
+
+  uncompletedBook.innerHTML = "";
+  completedBook.innerHTML = "";
+
+  for (const data of bookData) {
+    const dataElement = showBook(data);
+    if (data.isComplete != true) {
+      uncompletedBook.append(dataElement);
+    } else {
+      completedBook.append(dataElement);
+    }
+  }
+});
+
+document.addEventListener(SAVED_EVENT, function () {
+  console.log("Data berhasil di simpan.");
+});
+
 function addBook() {
   const title = document.querySelector("#inputTitleBook").value;
   const author = document.querySelector("#inputAuthorBook").value;
@@ -45,14 +66,6 @@ function addBook() {
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
   toastMsg("Buku Berhasil Ditambahkan");
-}
-
-function generateId() {
-  return +new Date();
-}
-
-function generateBookObject(id, title, author, year, isComplete) {
-  return { id, title, author, year, isComplete };
 }
 
 function showBook(bookObject) {
@@ -98,23 +111,6 @@ function showBook(bookObject) {
   return container;
 }
 
-document.addEventListener(RENDER_EVENT, function () {
-  const uncompletedBook = document.getElementById("book-shelf-uncompleted");
-  const completedBook = document.getElementById("book-shelf-completed");
-
-  uncompletedBook.innerHTML = "";
-  completedBook.innerHTML = "";
-
-  for (const data of bookData) {
-    const dataElement = showBook(data);
-    if (data.isComplete != true) {
-      uncompletedBook.append(dataElement);
-    } else {
-      completedBook.append(dataElement);
-    }
-  }
-});
-
 function changeBookCompleted(bookId) {
   const bookTarget = findBook(bookId);
 
@@ -131,15 +127,6 @@ function changeBookCompleted(bookId) {
   toastMsg("Buku Berhasil Dipindahkan");
 }
 
-function findBook(bookId) {
-  for (const data of bookData) {
-    if (data.id === bookId) {
-      return data;
-    }
-  }
-  return null;
-}
-
 function deleteBook(bookId) {
   const bookTarget = findBookIndex(bookId);
   if (bookTarget == -1) return;
@@ -152,16 +139,6 @@ function deleteBook(bookId) {
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
   toastMsg("Buku Berhasil Dihapus");
-}
-
-function findBookIndex(bookId) {
-  for (const index in bookData) {
-    if (bookData[index].id === bookId) {
-      return index;
-    }
-  }
-
-  return -1;
 }
 
 function isStorageExist() {
@@ -179,10 +156,6 @@ function saveData() {
     document.dispatchEvent(new Event(SAVED_EVENT));
   }
 }
-
-document.addEventListener(SAVED_EVENT, () => {
-  console.log("Data berhasil di simpan.");
-});
 
 function loadDataFromStorage() {
   const dataFromStorage = localStorage.getItem(STORAGE_KEY);
@@ -212,6 +185,32 @@ function loadDataFromSearch() {
     }
   }
   document.dispatchEvent(new Event(RENDER_EVENT));
+}
+
+function generateId() {
+  return +new Date();
+}
+
+function generateBookObject(id, title, author, year, isComplete) {
+  return { id, title, author, year, isComplete };
+}
+
+function findBook(bookId) {
+  for (const data of bookData) {
+    if (data.id === bookId) {
+      return data;
+    }
+  }
+  return null;
+}
+function findBookIndex(bookId) {
+  for (const index in bookData) {
+    if (bookData[index].id === bookId) {
+      return index;
+    }
+  }
+
+  return -1;
 }
 
 function toastMsg(msg) {
