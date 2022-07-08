@@ -33,13 +33,6 @@ function addBook() {
   const year = document.querySelector("#inputYearBook").value;
   const isComplete = document.querySelector("#isComplete").checked;
 
-  // if (title != "" && author != "" && year != "") {
-  //   bookData.push(book);
-  //   document.dispatchEvent(new Event(RENDER_EVENT));
-  // } else {
-  //   alert("Gagal Memasukkan Buku kedalam Rak buku");
-  // }
-
   const generateID = generateId();
   const bookObject = generateBookObject(
     generateID,
@@ -48,7 +41,12 @@ function addBook() {
     year,
     isComplete
   );
-  bookData.push(bookObject);
+
+  if ((title, author, year != "")) {
+    bookData.push(bookObject);
+  } else {
+    alert("Gagal Memasukkan Buku kedalam Rak buku");
+  }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
