@@ -15,6 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
     addBook();
     event.preventDefault();
   });
+
+  const submitSearch = document.getElementById("submit-search");
+  submitSearch.addEventListener("click", function (event) {
+    loadDataFromSearch();
+    event.preventDefault();
+  });
+
   if (isStorageExist()) {
     loadDataFromStorage();
   }
@@ -189,6 +196,24 @@ function loadDataFromStorage() {
   if (data !== null) {
     for (const newData of data) {
       bookData.push(newData);
+    }
+  }
+  document.dispatchEvent(new Event(RENDER_EVENT));
+}
+
+function loadDataFromSearch() {
+  const inputSearch = document
+    .getElementById("input-search")
+    .value.toLowerCase();
+  const dataFromStorage = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  if (bookData !== null) {
+    bookData.splice(0, bookData.length);
+  }
+  for (const data of dataFromStorage) {
+    titleBook = data.title.toLowerCase();
+    if (titleBook.includes(inputSearch)) {
+      bookData.push(data);
     }
   }
   document.dispatchEvent(new Event(RENDER_EVENT));
