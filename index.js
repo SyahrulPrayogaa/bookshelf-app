@@ -1,9 +1,7 @@
-// todo: implementasi local storage
-// Todo: berikan toast saat berhasil menambah atau menghapus data
-// TODO: buat pencarian data
-
 const bookData = [];
 const RENDER_EVENT = "render-book";
+const SAVED_EVENT = "saved-book";
+const STORAGE_KEY = "BOOK_SHELF";
 
 document.addEventListener("DOMContentLoaded", function () {
   const submitBook = document.getElementById("submit-book");
@@ -11,6 +9,37 @@ document.addEventListener("DOMContentLoaded", function () {
     addBook();
     event.preventDefault();
   });
+
+  const submitSearch = document.getElementById("submit-search");
+  submitSearch.addEventListener("click", function (event) {
+    loadDataFromSearch();
+    event.preventDefault();
+  });
+
+  if (isStorageExist()) {
+    loadDataFromStorage();
+  }
+});
+
+document.addEventListener(RENDER_EVENT, function () {
+  const uncompletedBook = document.getElementById("book-shelf-uncompleted");
+  const completedBook = document.getElementById("book-shelf-completed");
+
+  uncompletedBook.innerHTML = "";
+  completedBook.innerHTML = "";
+
+  for (const data of bookData) {
+    const dataElement = showBook(data);
+    if (data.isComplete != true) {
+      uncompletedBook.append(dataElement);
+    } else {
+      completedBook.append(dataElement);
+    }
+  }
+});
+
+document.addEventListener(SAVED_EVENT, function () {
+  console.log("Data berhasil di simpan.");
 });
 
 function addBook() {
@@ -18,13 +47,6 @@ function addBook() {
   const author = document.querySelector("#inputAuthorBook").value;
   const year = document.querySelector("#inputYearBook").value;
   const isComplete = document.querySelector("#isComplete").checked;
-
-  // if (title != "" && author != "" && year != "") {
-  //   bookData.push(book);
-  //   document.dispatchEvent(new Event(RENDER_EVENT));
-  // } else {
-  //   alert("Gagal Memasukkan Buku kedalam Rak buku");
-  // }
 
   const generateID = generateId();
   const bookObject = generateBookObject(
@@ -34,17 +56,16 @@ function addBook() {
     year,
     isComplete
   );
-  bookData.push(bookObject);
+
+  if ((title, author, year != "")) {
+    bookData.push(bookObject);
+  } else {
+    return alert("Gagal Memasukkan Buku kedalam Rak buku");
+  }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
-}
-
-function generateId() {
-  return +new Date();
-}
-
-function generateBookObject(id, title, author, year, isComplete) {
-  return { id, title, author, year, isComplete };
+  saveData();
+  toastMsg("Buku Berhasil Ditambahkan");
 }
 
 function showBook(bookObject) {
@@ -90,23 +111,6 @@ function showBook(bookObject) {
   return container;
 }
 
-document.addEventListener(RENDER_EVENT, function () {
-  const uncompletedBook = document.getElementById("book-shelf-uncompleted");
-  const completedBook = document.getElementById("book-shelf-completed");
-
-  uncompletedBook.innerHTML = "";
-  completedBook.innerHTML = "";
-
-  for (const data of bookData) {
-    const dataElement = showBook(data);
-    if (data.isComplete != true) {
-      uncompletedBook.append(dataElement);
-    } else {
-      completedBook.append(dataElement);
-    }
-  }
-});
-
 function changeBookCompleted(bookId) {
   const bookTarget = findBook(bookId);
 
@@ -119,15 +123,8 @@ function changeBookCompleted(bookId) {
   }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
-}
-
-function findBook(bookId) {
-  for (const data of bookData) {
-    if (data.id === bookId) {
-      return data;
-    }
-  }
-  return null;
+  saveData();
+  toastMsg("Buku Berhasil Dipindahkan");
 }
 
 function deleteBook(bookId) {
@@ -140,8 +137,72 @@ function deleteBook(bookId) {
   }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
+  toastMsg("Buku Berhasil Dihapus");
 }
 
+function isStorageExist() {
+  if (typeof Storage === undefined) {
+    alert("Maaf browser anda tidak mendukung local storage");
+    return false;
+  }
+  return true;
+}
+
+function saveData() {
+  if (isStorageExist()) {
+    let parsed = JSON.stringify(bookData);
+    localStorage.setItem(STORAGE_KEY, parsed);
+    document.dispatchEvent(new Event(SAVED_EVENT));
+  }
+}
+
+function loadDataFromStorage() {
+  const dataFromStorage = localStorage.getItem(STORAGE_KEY);
+  let data = JSON.parse(dataFromStorage);
+
+  if (data !== null) {
+    for (const newData of data) {
+      bookData.push(newData);
+    }
+  }
+  document.dispatchEvent(new Event(RENDER_EVENT));
+}
+
+function loadDataFromSearch() {
+  const inputSearch = document
+    .getElementById("input-search")
+    .value.toLowerCase();
+  const dataFromStorage = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  if (bookData !== null) {
+    bookData.splice(0, bookData.length);
+  }
+  for (const data of dataFromStorage) {
+    titleBook = data.title.toLowerCase();
+    if (titleBook.includes(inputSearch)) {
+      bookData.push(data);
+    }
+  }
+  document.dispatchEvent(new Event(RENDER_EVENT));
+}
+
+function generateId() {
+  return +new Date();
+}
+
+function generateBookObject(id, title, author, year, isComplete) {
+  return { id, title, author, year, isComplete };
+}
+
+function findBook(bookId) {
+  for (const data of bookData) {
+    if (data.id === bookId) {
+      return data;
+    }
+  }
+  return null;
+}
 function findBookIndex(bookId) {
   for (const index in bookData) {
     if (bookData[index].id === bookId) {
@@ -152,22 +213,11 @@ function findBookIndex(bookId) {
   return -1;
 }
 
-// const submitSearch = document.getElementById("submit-search");
-
-// submitSearch.addEventListener("click", function () {
-//   const inputSearch = document.querySelector("#input-search").value;
-//   searchItem(inputSearch);
-// });
-
-// function searchItem(input) {
-//   const query = () => {
-//     return input;
-//   };
-//   console.log(bookData.filter(query));
-//   // for (let i = 0; i < bookData.length; i++) {
-//   //   if (bookData[i].title == input) {
-//   //   }
-//   // }
-
-//   // document.dispatchEvent(new Event(RENDER_EVENT));
-// }
+function toastMsg(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, "3500");
+}

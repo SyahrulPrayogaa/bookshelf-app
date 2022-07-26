@@ -112,3 +112,25 @@ margin-bottom: 10px;
 .btn-group .btn{
   margin: 3px;
 }
+
+#toast{
+  visibility: hidden;
+  position: fixed;
+  top: 80px ;
+  right: 5%;
+  min-width: 250px;
+  background-color: #033870af;
+  color: white;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+#toast.show{
+  visibility: visible;
+  animation: fadein 1s;
+}
+
+@keyframes fadein {
+  from {opacity: 0;}
+  to { opacity: 1;}
+}
